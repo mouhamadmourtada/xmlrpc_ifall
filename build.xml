@@ -19,7 +19,6 @@
     <property name="jar.interfaces" value="interfaces.jar"/>
 
 
-
     <path id="classpath">
         <fileset dir="${lib.dir}">
             <include name="${jar.xmlrpc}"/>
@@ -51,12 +50,13 @@
         </jar>
     </target>
 
-    <target name="compile-client" >
+    <target name="compile-client" depends="compile-interface">
         <mkdir dir="${build.dir}"/>
-        <javac srcdir="${src.dir}/client" destdir="${build.dir}" classpathref="classpath">
-            <!-- <classpath>
+        <javac srcdir="${src.dir}" destdir="${build.dir}" classpathref="classpath" includeantruntime="false">
+            <include name="client/**/*.java"/>
+            <classpath>
                 <path location="${lib.dir}/interfaces.jar"/>
-            </classpath> -->
+            </classpath>
         </javac>
     </target>
 
@@ -76,15 +76,16 @@
         <javadoc sourcepath="${src.dir}" destdir="${doc.dir}"/>
     </target>
 
-    <target name="jar-client">
+    <target name="jar-client" depends="compile-client">
         <mkdir dir="${jar.dir}"/>
         <jar destfile="${jar.dir}/${jar.client}">
             <fileset dir="${build.dir}">
                 <include name="interfaces/*.class"/>
-                <include name="client/*.class"/>
+                <include name="client/**/*.class"/>
             </fileset>
             <manifest>
                 <attribute name="Main-Class" value="client.App"/>
+                <attribute name="Class-Path" value="../lib/${jar.xmlrpc} ../lib/${jar.commons-codec}"/>
             </manifest>
         </jar>
     </target>
@@ -138,7 +139,6 @@
 
 
 </project>
-
 
 
 
