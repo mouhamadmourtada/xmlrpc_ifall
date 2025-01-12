@@ -1,0 +1,144 @@
+<!-- on doit mettre un fichietr pour ant, compilation, generation de la doc, des jar et taches pour l'exécution du client et aussu un pour le server. -->
+<!-- il y a deux jar dans lib, on aura besoin du jar xmlrpc-2.0.jar pour la compilation et pour l'exécution on aura besoin des deux jar -->
+
+
+<project name="Projet" default="all" basedir=".">
+    <property name="src.dir" value="src"/>
+    <property name="build.dir" value="bin"/>
+    <property name="dist.dir" value="dist"/>
+    <property name="lib.dir" value="lib"/>
+    <property name="doc.dir" value="doc"/>
+    <property name="client.dir" value="client"/>
+    <property name="server.dir" value="server"/>
+    <property name="jar.dir" value="archive"/>
+    <property name="jar.client" value="client.archive.jar"/>
+    <property name="jar.server" value="server.archive.jar"/>
+    <property name="jar.all" value="all.jar"/>
+    <property name="jar.xmlrpc" value="xmlrpc-2.0.jar"/>
+    <property name="jar.commons-codec" value="commons-codec-1.16.0.jar"/>
+    <property name="jar.interfaces" value="interfaces.jar"/>
+
+
+
+    <path id="classpath">
+        <fileset dir="${lib.dir}">
+            <include name="${jar.xmlrpc}"/>
+            <include name="${jar.commons-codec}"/>
+            <include name="${jar.interfaces}"/>
+        </fileset>
+    </path>
+
+    <target name="clean">
+        <delete dir="${build.dir}"/>
+        <delete dir="${dist.dir}"/>
+        <delete dir="${doc.dir}"/>
+        <delete dir="${client.dir}"/>
+        <delete dir="${server.dir}"/>
+        <delete dir="${jar.dir}"/>
+    </target>
+
+    <target name="compile-interface" >
+        <mkdir dir="${build.dir}"/>
+        <javac srcdir="${src.dir}/interfaces" destdir="${build.dir}" classpathref="classpath"/>
+    </target>
+
+    <target name="jar-interface" >
+        <mkdir dir="${lib.dir}"/>
+        <jar destfile="${lib.dir}/interfaces.jar">
+            <fileset dir="${build.dir}">
+                <include name="interfaces/*.class"/>
+            </fileset>
+        </jar>
+    </target>
+
+    <target name="compile-client" >
+        <mkdir dir="${build.dir}"/>
+        <javac srcdir="${src.dir}/client" destdir="${build.dir}" classpathref="classpath">
+            <!-- <classpath>
+                <path location="${lib.dir}/interfaces.jar"/>
+            </classpath> -->
+        </javac>
+    </target>
+
+    <target name="compile-server" >
+        <mkdir dir="${build.dir}"/>
+        <javac srcdir="${src.dir}/server" destdir="${build.dir}" classpathref="classpath">
+            <!-- <classpath>
+                <path location="${lib.dir}/interfaces.jar"/>
+            </classpath> -->
+        </javac>
+    </target>
+
+    <target name="compile" depends="compile-client,compile-server"/>
+
+    <target name="doc" >
+        <mkdir dir="${doc.dir}"/>
+        <javadoc sourcepath="${src.dir}" destdir="${doc.dir}"/>
+    </target>
+
+    <target name="jar-client">
+        <mkdir dir="${jar.dir}"/>
+        <jar destfile="${jar.dir}/${jar.client}">
+            <fileset dir="${build.dir}">
+                <include name="interfaces/*.class"/>
+                <include name="client/*.class"/>
+            </fileset>
+            <manifest>
+                <attribute name="Main-Class" value="client.App"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="jar-server" depends="compile-server">
+        <mkdir dir="${jar.dir}"/>
+        <jar destfile="${jar.dir}/${jar.server}">
+            <fileset dir="${build.dir}">
+                <include name="interfaces/*.class"/>
+                <include name="server/*.class"/>
+            </fileset>
+            <manifest>
+                <attribute name="Main-Class" value="server.Serveur"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <!-- une tache pour les deux jar -->
+    <target name="jar-all" depends="jar-client,jar-server"/>    
+
+
+    <target name="client">
+        <mkdir dir="${client.dir}"/>
+        <java classname="client.App" >
+            <classpath>
+                <pathelement location="${jar.dir}/${jar.client}"/>
+                <pathelement location="${lib.dir}/${jar.xmlrpc}"/>
+                <pathelement location="${lib.dir}/${jar.commons-codec}"/>
+            </classpath>
+        </java>
+    </target>
+
+    <target name="server" >
+        <mkdir dir="${server.dir}"/>
+        <java classname="server.Serveur" fork="true">
+            <classpath>
+                <pathelement location="${jar.dir}/${jar.server}"/>
+                <pathelement location="${lib.dir}/${jar.xmlrpc}"/>
+                <pathelement location="${lib.dir}/${jar.commons-codec}"/>
+            </classpath>
+        </java>
+    </target>
+
+    <target name="all">
+        <antcall target="clean"/>
+        <antcall target="compile-interface"/>
+        <antcall target="jar-interface"/>
+        <antcall target="compile"/>
+        <antcall target="jar-all"/>
+    </target>
+
+
+</project>
+
+
+
+
