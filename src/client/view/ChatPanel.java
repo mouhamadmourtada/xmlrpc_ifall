@@ -41,12 +41,12 @@ public class ChatPanel extends JScrollPane {
     public void appendMessage(ChatMessage message) {
         String timestamp = timeFormat.format(message.getTimestamp());
         String htmlMessage = String.format(
-            "<div style='background-color: white; margin: 5px 0; padding: 5px;'>" +
-            "<span style='color: #666666; font-size: 12px;'>[%s]</span> " +
+            "<div style='background-color: #f8f8f8; box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset ; margin: 5px 0; padding: 5px;'>" +
             "<span style='color: #0066cc; font-weight: bold;'>%s</span>" +
-            "<div style='margin: 5px 0 5px 20px; color: black;'>%s</div>" +
+            "<span style='color: #666666; font-size: 8px;'>%s</span> " +
+            "<div style='margin: 2px 0 2px 2px; color: black;'>%s</div>" +
             "</div>",
-            timestamp, message.getSender(), message.getContent()
+            message.getSender(), timestamp, message.getContent()
         );
         
         try {

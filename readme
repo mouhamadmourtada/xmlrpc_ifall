@@ -1,0 +1,47 @@
+# Build Documentation for XML-RPC Chat Application
+
+## Project Properties
+
+| Property | Description |
+|----------|-------------|
+| `src.dir` | Source code directory (`src/`) |
+| `bin.dir` | Compiled classes directory (`bin/`) |
+| `lib.dir` | External libraries directory (`lib/`) |
+| `jar.dir` | Output JAR files directory (`archive/`) |
+| `doc.dir` | JavaDoc documentation directory (`doc/`) |
+
+## Build Targets
+
+### Main Targets
+
+- `all`: Main target that executes `clean`, `compile`, and `jar-all`
+- `clean`: Removes all generated directories (bin, archive, doc)
+- `compile`: Compiles all source code
+- `jar-all`: Creates JAR files for interfaces, client and server
+- `doc`: Generates JavaDoc documentation
+
+### Execution Targets
+
+- `client`: Runs the chat client application
+- `server`: Runs the chat server application
+
+## Dependencies
+
+Required libraries in `lib/` directory:
+- `xmlrpc-2.0.jar`: XML-RPC implementation
+- `commons-codec-1.16.0.jar`: Apache Commons Codec
+
+## Build Commands
+
+```bash
+# Clean and rebuild everything
+ant all
+
+# Run the server
+ant server
+
+# Run the client
+ant client
+
+# Generate documentation
+ant doc

@@ -11,12 +11,13 @@
     <property name="client.dir" value="client"/>
     <property name="server.dir" value="server"/>
     <property name="jar.dir" value="archive"/>
-    <property name="jar.client" value="client.archive.jar"/>
-    <property name="jar.server" value="server.archive.jar"/>
+    <property name="jar.client" value="client.jar"/>
+    <property name="jar.server" value="server.jar"/>
     <property name="jar.all" value="all.jar"/>
     <property name="jar.xmlrpc" value="xmlrpc-2.0.jar"/>
     <property name="jar.commons-codec" value="commons-codec-1.16.0.jar"/>
     <property name="jar.interfaces" value="interfaces.jar"/>
+
 
 
     <path id="classpath">
@@ -50,13 +51,12 @@
         </jar>
     </target>
 
-    <target name="compile-client" depends="compile-interface">
+    <target name="compile-client" >
         <mkdir dir="${build.dir}"/>
-        <javac srcdir="${src.dir}" destdir="${build.dir}" classpathref="classpath" includeantruntime="false">
-            <include name="client/**/*.java"/>
-            <classpath>
+        <javac srcdir="${src.dir}/client" destdir="${build.dir}" classpathref="classpath">
+            <!-- <classpath>
                 <path location="${lib.dir}/interfaces.jar"/>
-            </classpath>
+            </classpath> -->
         </javac>
     </target>
 
@@ -76,16 +76,15 @@
         <javadoc sourcepath="${src.dir}" destdir="${doc.dir}"/>
     </target>
 
-    <target name="jar-client" depends="compile-client">
+    <target name="jar-client">
         <mkdir dir="${jar.dir}"/>
         <jar destfile="${jar.dir}/${jar.client}">
             <fileset dir="${build.dir}">
-                <include name="interfaces/*.class"/>
-                <include name="client/**/*.class"/>
+                <include name="interfaces/**"/>
+                <include name="client/**"/>
             </fileset>
             <manifest>
                 <attribute name="Main-Class" value="client.App"/>
-                <attribute name="Class-Path" value="../lib/${jar.xmlrpc} ../lib/${jar.commons-codec}"/>
             </manifest>
         </jar>
     </target>
@@ -107,13 +106,28 @@
     <target name="jar-all" depends="jar-client,jar-server"/>    
 
 
-    <target name="client">
+    <!-- <target name="client">
         <mkdir dir="${client.dir}"/>
         <java classname="client.App" >
             <classpath>
                 <pathelement location="${jar.dir}/${jar.client}"/>
                 <pathelement location="${lib.dir}/${jar.xmlrpc}"/>
                 <pathelement location="${lib.dir}/${jar.commons-codec}"/>
+            </classpath>
+        </java>
+    </target> -->
+    <target name="client">
+        <java classname="client.App" fork="true">
+            <classpath>
+                <path>
+                    <fileset dir="${jar.dir}">
+                        <include name="${jar.client}"/>
+                    </fileset>
+                    <fileset dir="${lib.dir}">
+                        <include name="${jar.xmlrpc}"/>
+                        <include name="${jar.commons-codec}"/>
+                    </fileset>
+                </path>
             </classpath>
         </java>
     </target>
@@ -139,6 +153,7 @@
 
 
 </project>
+
 
 
 
